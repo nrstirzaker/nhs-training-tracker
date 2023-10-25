@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .inputLabel {
+        @apply text-left;
+    }
+    .btn {
+        @apply font-bold text-base rounded h-8 w-20 mr-2 mt-2;
+    }
+    .btn-blue {
+        @apply bg-blue-500 text-white;
+    }
+    .btn-blue:hover {
+        @apply bg-blue-700;
+    }
+
+    .btn-green {
+        @apply bg-green-500 text-white;
+    }
+    .btn-green:hover {
+        @apply bg-green-700;
+    }
+    .btn-red {
+        @apply bg-red-500 text-white;
+    }
+    .btn-blue:hover {
+        @apply bg-red-700;
+    }
+}
