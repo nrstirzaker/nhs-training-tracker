@@ -1,9 +1,8 @@
 import { defineStore,mapStores } from 'pinia'
 
-import PocketBase from 'pocketbase';
 import axios from "axios";
 
-const pb = new PocketBase('http://127.0.0.1:8090');
+
 
 // You can name the return value of `defineStore()` anything you want,
 // but it's best to use the name of the store and surround it with `use`

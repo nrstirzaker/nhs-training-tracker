@@ -17,7 +17,7 @@ export default defineComponent({
   <div class="sidebar" :style="{width : sidebarWidth}">
     <h1>
       <span v-if="collapsed">
-        <div>M</div>
+        M
       </span>
       <span v-else>Menu</span>
     </h1>
