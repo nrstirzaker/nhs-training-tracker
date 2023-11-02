@@ -28,7 +28,7 @@ export default defineComponent({
       const headers = {
         "Authorization": userAuth
       };
-      const data = {first_name:"fred", family_name:"blogs"}
+      const data = {first_name:"fred", last_name:"blogs"}
       axios.post('http://127.0.0.1:8090/api/collections/Staff/records',data, {headers})
           .then(response => console.log(response))
 

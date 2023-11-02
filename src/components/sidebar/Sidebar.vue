@@ -1,7 +1,7 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 import SidebarLink from "./SidebarLink.vue";
-import {collapsed, toggleSidebar, sidebarWidth} from './state.js'
+import {collapsed, toggleSidebar, sidebarWidth} from './state.ts'
 
 export default defineComponent({
   name: "Sidebar.vue",

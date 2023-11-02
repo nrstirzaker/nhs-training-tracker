@@ -20,7 +20,7 @@ export default{
       const headers = {
         "Authorization": authData
       };
-      const data = {first_name:this.form.firstName, family_name:this.form.lastName}
+      const data = {first_name:this.form.firstName, last_name:this.form.lastName}
       axios.post('http://127.0.0.1:8090/api/collections/Staff/records',data, {headers})
           .then(response => console.log(response))
     }
@@ -36,15 +36,16 @@ export default{
         <input v-model="form.firstName" class="input" type="text" placeholder="First Name">
       </div>
       <div class="control">
-        <input v-model="form.lastName" class="input" type="text" placeholder="Family Name">
+        <input v-model="form.lastName" class="input" type="text" placeholder="Last Name">
       </div>
-      <div class="button">
-        <input type="submit" @click='onSubmit' class="btn btn-block" />
+      <div class="tw-button">
+        <input type="submit" @click='onSubmit' class="tw-btn tw-btn-block" />
       </div>
     </div>
   </section>
 </template>
 
 <style scoped>
+
 
 </style>

@@ -1,7 +1,7 @@
 <script>
 import {computed, defineComponent} from 'vue'
 import {useRoute} from 'vue-router'
-import {collapsed} from "./state.js";
+import {collapsed} from "./state.ts";
 
 export default defineComponent({
   name: "SidebarLink",

@@ -3,29 +3,29 @@
 @tailwind utilities;
 
 @layer components {
-    .inputLabel {
-        @apply text-left;
+    .tw-inputLabel {
+        @apply tw-text-left;
     }
-    .btn {
-        @apply font-bold text-base rounded h-8 w-20 mr-2 mt-2;
+    .tw-btn {
+        @apply tw-font-bold tw-text-base tw-rounded tw-h-8 tw-w-20 tw-mr-2 tw-mt-2;
     }
-    .btn-blue {
-        @apply bg-blue-500 text-white;
+    .tw-btn-blue {
+        @apply tw-bg-blue-500 tw-text-white;
     }
-    .btn-blue:hover {
-        @apply bg-blue-700;
+    .tw-btn-blue:hover {
+        @apply tw-bg-blue-700;
     }
 
-    .btn-green {
-        @apply bg-green-500 text-white;
+    .tw-btn-green {
+        @apply tw-bg-green-500 tw-text-white;
     }
-    .btn-green:hover {
-        @apply bg-green-700;
+    .tw-btn-green:hover {
+        @apply tw-bg-green-700;
     }
-    .btn-red {
-        @apply bg-red-500 text-white;
+    .tw-btn-red {
+        @apply tw-bg-red-500 tw-text-white;
     }
-    .btn-blue:hover {
-        @apply bg-red-700;
+    .tw-btn-blue:hover {
+        @apply tw-bg-red-700;
     }
 }
