@@ -19,7 +19,7 @@ export default defineComponent({
   methods: {
     async "onSubmit"(e) {
       e.preventDefault();
-      const authData = await pb.collection('users').authWithPassword('nrstirzaker.techblog@gmail.com, '3f1l35!!');
+      //const authData = await pb.collection('users').authWithPassword('nrstirzaker.techblog@gmail.com', '3f1l35!!');
       const userAuth = localStorage.getItem("pocketbase_admin_auth")
       if (userAuth){
         console.log("ok")

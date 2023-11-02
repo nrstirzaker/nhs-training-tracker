@@ -2,13 +2,13 @@
 import {defineComponent, onMounted} from 'vue'
 import axios from "axios";
 import {getBasicRequestHeader} from "./form-utils.ts";
-import {useBandOptionsStore} from "../store/BandOptionsStore.js";
+import {useBandOptionsStore} from "../store/BandOptionsStore.ts";
 import {sidebarWidth} from "../components/sidebar/state.ts";
 import staffListGrid from "../components/StaffListGrid.vue";
 import {required} from "./form-validators.ts";
-import ButtonBar  from "../components/buttonbar/ButtonBar.vue";
-import {Action}  from "../components/buttonbar/Action.ds.ts";
-
+import ButtonBar from "../components/buttonbar/ButtonBar.vue";
+import {Action} from "../components/buttonbar/Action.ds.ts";
+import {BandDs} from "../store/Band.ds.ts";
 
 
 export default defineComponent({
@@ -66,7 +66,7 @@ export default defineComponent({
 
     },
     collateData: function () {
-      const data = {
+      return {
         first_name: this.form.firstName,
         last_name: this.form.lastName,
         on_strength: this.form.onStrength,
@@ -75,15 +75,14 @@ export default defineComponent({
         WTE: this.form.WTE,
         substantive: this.form.substantive,
         on_maternity_leave: this.form.onMaternityLeave
-      }
-      return data;
+      };
     },
     getBands: function () {
       const records = this.bandOptionsStore.getBands();
 
-      const bands = [];
+      const bands : BandDs[]  = [];
 
-      records.forEach((items) => {
+      records.forEach((items ) => {
         bands.push({id: items.id, label: items.label})
       })
       return bands;
@@ -139,9 +138,9 @@ export default defineComponent({
         </div>
 
         <div class="tw-inputItem ">
-          <div class="tw-inputLabel"><span>Band *</span></div>
+          <div class="tw-inputLabel"><span>BandDs *</span></div>
           <v-select class="tw-fieldSelect block pa-0 ma-0" v-model="this.form.bandId" name="bandId" :items="this.getBands()" item-value="id"
-                    item-title="label" placeholder="Band"/>
+                    item-title="label" placeholder="BandDs"/>
         </div>
       </div>
 

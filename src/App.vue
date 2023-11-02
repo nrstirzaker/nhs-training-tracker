@@ -3,7 +3,7 @@ import Sidebar from "./components/sidebar/Sidebar.vue";
 import {sidebarWidth} from "./components/sidebar/state.ts";
 import PocketBase from 'pocketbase';
 import {onMounted} from "vue";
-import  {useBandOptionsStore} from "./store/BandOptionsStore.js";
+import  {useBandOptionsStore} from "./store/BandOptionsStore.ts";
 
 
 

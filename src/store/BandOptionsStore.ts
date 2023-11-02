@@ -1,7 +1,8 @@
 import { defineStore,mapStores } from 'pinia'
 
 import axios from "axios";
-import {getBasicRequestHeader} from "../views/form-utils.ts";
+import {basicRequestHeader, getBasicRequestHeader} from "../views/form-utils.ts";
+import {Band} from "./Band.ds.ts";
 
 
 
@@ -11,7 +12,7 @@ import {getBasicRequestHeader} from "../views/form-utils.ts";
 // the first argument is a unique id of the store across your application
 export const useBandOptionsStore = defineStore('bandOptions', {
     state: () => ({
-        bandOptions: [],
+        bandOptions : [],
     }),
     getters:{
         getBandOptions(state){
@@ -21,13 +22,13 @@ export const useBandOptionsStore = defineStore('bandOptions', {
     actions: {
         async fetchBandOptions() {
             try {
-                const requestHeaders = getBasicRequestHeader()
+                const requestHeaders : basicRequestHeader = getBasicRequestHeader()
 
                 axios.get('http://127.0.0.1:8090/api/collections/Band/records?sort=band_id', {headers:requestHeaders})
                     .then(response => {
                         for (let i = 0 ; i < response.data.items.length; i++){
                             const bandRecord = response.data.items[i];
-                            const band = {id:bandRecord.id, label:bandRecord.band_name};
+                            const band : Band = new Band(bandRecord.id,<string>bandRecord.band_name};
                             this.bandOptions.push(band);
                         }
 
