@@ -1,55 +1,71 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 
+
 import {
-  VDataTableServer,
+  VDataTable,
 } from "vuetify/labs/VDataTable";
-import  { getBasicRequestHeader, type basicRequestHeader} from "../views/form-utils";
-import axios from "axios";
 
-export interface iStaffListGrid{
+import {useBandListStore} from "@/store/BandListStore";
+import {useStaffStore} from "@/store/StaffStore";
+import iStaffDTO from "@/declarations/iRawStaffDTO.d.ts";
 
-}
 
-export default defineComponent ( {
+
+export default defineComponent({
   name: "staffListGrid",
+
   components: {
-    VDataTableServer,
+    VDataTable,
   },
-  mounted(){
-    this.getStaffListData();
+
+  mounted() {
+    this.staff.push(this.staffStore.getStaff );
   },
-  expose:['getStaffListData'],
-  methods:{
-    getStaffListData: function(){
+  setup() {
 
-      const requestHeader : basicRequestHeader = getBasicRequestHeader();
+    const bandListStore = useBandListStore()
+    const staffStore = useStaffStore()
 
-      axios.get("http://127.0.0.1:8090/api/collections/Staff/records?filter=(archived=False)", {headers:requestHeader})
-          .then(response => {
-            const temp = [];
-            for( let i = 0 ; i < response.data.items.length ; i++){
-              const ssoStaff = response.data.items[i];
-              const clientStaff = {
-                id : ssoStaff.id,
-                fullname: ssoStaff.first_name +' ' + ssoStaff.last_name,
-                onStrength: ssoStaff.on_strength,
-                bandId: ssoStaff.band_id,
-                wte: ssoStaff.WTE,
-                substantive: ssoStaff.substantive,
-                maternity: ssoStaff.maternity,
-              }
-              temp.push(clientStaff);
-            }
-            this.staff = temp;
-          })
+    return {bandListStore, staffStore}
+
+  },
+  expose: ["refresh","update"],
+  emits: ['rowSelectAction'],
+  methods: {
+    rowClick: function (item:iStaffDTO) {
+      const indexOf = this.selected.indexOf(item.id);
+      if (indexOf === -1){
+        this.$emit("rowSelectAction", item)
+        this.selected = []
+        this.selected.push(item.id)
+
+      }
+
+    },
+
+    refresh: function () {
+
+      this.staff = []
+      this.staff.push( this.staffStore.getStaff )
+      this.selected = []
+      this.selected.push(this.staffStore.getStaff[0].id)
+
+    },
+    update: function (id:string) {
+
+      this.staff = []
+      this.staff.push( this.staffStore.getStaff )
+      this.selected = []
+      this.selected.push(id)
+
     }
-
   },
-  data(){
-    return {
-      itemsPerPage :5,
-      headers:[
+  data:() =>( {
+
+      selectedRowId: "-1",
+      itemsPerPage: 5,
+      headers: [
         {
           title: 'id',
           align: ' d-none',
@@ -61,38 +77,48 @@ export default defineComponent ( {
           align: 'left',
           sortable: true,
           key: 'fullname',
-          width:"150px",
+          width: "150px",
 
         },
-        { title: 'Band', align: 'center', key: 'bandName', width:"150px" },
-        { title: 'WTE', align: 'center', key: 'wte' },
-        { title: 'On Strength', align: 'center', key: 'onStrength' },
-        { title: 'Substantive', align: 'center', key: 'substantive' },
-        { title: 'Maternity', align: 'center', key: 'maternity' },
-        { title: 'Maternity', align: 'center', key: 'maternity' },
+        {title: 'Band', align: 'center', key: 'bandName', width: "150px"},
+        {title: 'WTE', align: 'center', key: 'wholeTimeEquivalent'},
+        {title: 'On Strength', align: 'center', key: 'onStrength'},
+        {title: 'Substantive', align: 'center', key: 'substantive'},
+        {title: 'Maternity', align: 'center', key: 'maternity'}
 
 
       ],
-      staff :[
-      ]
+      staff: [],
+      selected: []
 
-    }
-  }
+
+    })
+
 })
 </script>
 
 <template>
   <v-app>
-    <v-data-table-server
-        v-model:items-per-page="itemsPerPage"
-        :headers="this.headers"
-        :items=this.staff
-        v-model=this.staff
-        :itemsLength=this.staff.length
-        item-value="name"
+    <v-data-table
+        :headers="headers"
+        :items=this.staffStore.getStaff
         class="elevation-1"
-        update:modelValue=this.getStaffListData
-    ></v-data-table-server>
+
+    >
+      <template v-slot:item="{item}">
+
+        <tr  @click="rowClick(item)" v-bind:class="this.selected.includes(item.id) ? 'custom-highlight-row' : ''">
+
+          <td>{{ item.fullname }}</td>
+          <td>{{ item.bandName }}</td>
+          <td>{{ item.wholeTimeEquivalent }}</td>
+          <td>{{ item.substantive }}</td>
+          <td>{{ item.onStrength }}</td>
+          <td>{{ item.maternity }}</td>
+        </tr>
+
+      </template>
+    </v-data-table>
   </v-app>
 </template>
 

@@ -1,0 +1,26 @@
+[
+  {
+    "band_id" : 5,
+    "name" : "Band 5",
+    "display_order" : 1,
+    "deprecated" : false
+  },
+  {
+    "band_id" : 6,
+    "name" : "Band 6",
+    "display_order" : 2,
+    "deprecated" : false
+  },
+  {
+    "band_id" : 7,
+    "name" : "Band 7",
+    "display_order" : 3,
+    "deprecated" : false
+  },
+  {
+    "band_id" : 8,
+    "name" : "Band 8",
+    "display_order" : 4,
+    "deprecated" : false
+  }
+]

@@ -3,8 +3,9 @@ import {defineComponent} from 'vue'
 
 import PocketBase from 'pocketbase';
 import axios from "axios";
+import {DB_URL_ROOT} from "@/Constants.js";
 
-const pb = new PocketBase('http://127.0.0.1:8090');
+const pb = new PocketBase(DB_URL_ROOT);
 
 export default defineComponent({
 
@@ -29,7 +30,7 @@ export default defineComponent({
         "Authorization": userAuth
       };
       const data = {first_name:"fred", last_name:"blogs"}
-      axios.post('http://127.0.0.1:8090/api/collections/Staff/records',data, {headers})
+      axios.post(DB_URL_ROOT + '/api/collections/Staff/records',data, {headers})
           .then(response => console.log(response))
 
 

@@ -9,6 +9,9 @@
     .tw-btn {
         @apply tw-font-bold tw-text-base tw-rounded tw-h-8 tw-w-20 tw-mr-2 tw-mt-2;
     }
+    .tw-btn-disabled {
+        @apply tw-font-bold tw-text-base tw-rounded tw-h-8 tw-w-20 tw-mr-2 tw-mt-2 tw-bg-gray-400 tw-text-black;
+    }
     .tw-btn-blue {
         @apply tw-bg-blue-500 tw-text-white;
     }
@@ -27,5 +30,13 @@
     }
     .tw-btn-blue:hover {
         @apply tw-bg-red-700;
+    }
+
+    .v-data-table__tr_1 {
+        background: #7d92f5 !important;
+    }
+
+    .custom-highlight-row {
+        background: #7d92f5 !important;
     }
 }

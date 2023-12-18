@@ -1,30 +1,32 @@
-<script>
+<script >
 import Sidebar from "./components/sidebar/Sidebar.vue";
-import {sidebarWidth} from "./components/sidebar/state.ts";
+import {sidebarWidth} from "@/components/sidebar/state.ts";
 import PocketBase from 'pocketbase';
-import {onMounted} from "vue";
-import  {useBandOptionsStore} from "./store/BandOptionsStore.ts";
+import {useBandListStore} from "@/store/BandListStore";
+import {DB_URL_ROOT} from "@/Constants.js";
 
 
 
 
-const pb = new PocketBase('http://127.0.0.1:8090');
-
+const pb = new PocketBase(DB_URL_ROOT);
 
 export default {
-  components: {Sidebar},
-  setup() {
-    onMounted(() => {
-      pb.admins.authWithPassword('nrstirzaker.techblog@gmail.com', 'rush:RECEIVE:decided:02');
+  components:{
+    Sidebar
+  },
+  computed: {
+    sidebarWidth() {
+      return sidebarWidth
+    }
+  },
+  methods: {
+    init: async function () {
+      await pb.admins.authWithPassword('nrstirzaker.techblog@gmail.com', 'rush:RECEIVE:decided:02');
       sessionStorage.setItem('token', pb.authStore.token)
-      const store = useBandOptionsStore();
-      store.fetchBandOptions();
-    })
-    return {sidebarWidth}
-
+      const store = useBandListStore();
+      await store.load();
+    }
   }
-
-
 }
 
 

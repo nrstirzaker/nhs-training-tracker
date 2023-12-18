@@ -1,9 +1,9 @@
 export class Band {
 
-    constructor(id: string, label: string) {
-        this.id = id;
-        this.label = label;
+    constructor(band_id: number, name: string) {
+        this.band_id = band_id;
+        this.name = name;
     }
-    id:string,
-    label:string
+    band_id:number
+    name:string
 }

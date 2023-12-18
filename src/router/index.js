@@ -1,7 +1,7 @@
 import {createRouter,createWebHistory } from "vue-router";
 
 import Dashboard from "../views/Dashboard.vue";
-import Staff from "../views/Staff.vue";
+import Staff from "../views/StaffPage.vue";
 import Equipment from "../views/Equipment.vue";
 import Training from "../views/Training.vue";
 import Admin from "../views/Admin.vue";
