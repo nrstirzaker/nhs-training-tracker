@@ -51,11 +51,16 @@ export const useStaffStore = defineStore('staffStore', {
 
                     for( let i = 0 ; i < response.data.items.length ; i++){
                         const ssoStaff = response.data.items[i];
-                        const bandName = getBandById.value(ssoStaff.band_id).name;
+                        console.log("ssoStaff.band_id: " + ssoStaff.band_id);
+                        console.log("store loaded: " + bandListStore.isLoaded);
+                        const band = getBandById.value(ssoStaff.band_id);
+                        console.log("band: " + band);
+                        const bandName = band.name;
                         const staffDisplayable = {
                             id : ssoStaff.id,
                             fullname: ssoStaff.first_name +' ' + ssoStaff.last_name,
                             bandName: bandName,
+                            startDate: ssoStaff.start_date,
                             wholeTimeEquivalent: ssoStaff.whole_time_equivalent,
                             substantive: ssoStaff.substantive,
                             onStrength: ssoStaff.on_strength,
@@ -67,6 +72,7 @@ export const useStaffStore = defineStore('staffStore', {
                             id : ssoStaff.id,
                             firstName: ssoStaff.first_name,
                             lastName: ssoStaff.last_name,
+                            startDate: ssoStaff.start_date,
                             bandId: ssoStaff.band_id,
                             wholeTimeEquivalent: ssoStaff.whole_time_equivalent,
                             substantive: ssoStaff.substantive,

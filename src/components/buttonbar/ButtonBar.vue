@@ -3,16 +3,21 @@ import {defineComponent} from 'vue'
 import Action from "./Action.ts";
 import {Mode} from "././Mode.ts";
 import StateEngineClass from "./StateEngineClass.ts";
-import ValidationStage from "@/components/buttonbar/ValidationStage.js";
+import ValidationStage from "./ValidationStage";
 
+
+import {confirm} from './dialogs/dialogs.ts';
+import {DialogWrapper} from 'vue3-promise-dialog';
 
 
 export default defineComponent({
   name: "ButtonBar",
+  components: {DialogWrapper},
   props:['validationStage'],
   data(){
     return {
-      currentButtonMode : Mode.View
+      currentButtonMode : Mode.View,
+      confirmArchive:false
     }
   },
   computed: {
@@ -25,6 +30,9 @@ export default defineComponent({
   },
   setup(){
     const stateEngine :StateEngineClass = StateEngineClass.getInstance()
+
+
+
     return {stateEngine}
   },
   emits: ['btnAction'],
@@ -71,11 +79,38 @@ export default defineComponent({
     clearForm: function(){
       //this.form.clearForm();
     },
+    async openConfirmationDialog () {
+      const message: string = "'Archiving' a member of staff should only occur when they leave the Trusts permanently. Once this is done no new training can be assigned to them. Do you wish to continue?";
+      return await confirm(message, "Continue", "Cancel");
+    },
+    async archiveIfConfirmed(){
+      this.openConfirmationDialog().then((response) => {
+        this.confirmArchive = response;
+        if (response){
+          this.$emit("btnAction", Action.ArchiveAction)
+          this.archive();
+          this.viewMode();
+        }else{
+          console.log("Archive Cancelled")
+        }
+      })
+
+    },
 
     btnClick: function(action: Action){
-      console.log("ButtonBar:btnClick: Init")
 
-      this.$emit("btnAction", action)
+      console.log("ButtonBar:btnClick:action: " + action)
+
+      switch(action){
+        case Action.AddAction:
+        case Action.EditAction:
+        case Action.SaveAction:
+        case Action.CancelAction:
+          //don't send to parent if archiving
+          // unless the user confirms
+          this.$emit("btnAction", action)
+      }
+
       switch(action){
         case Action.AddAction:
           this.add();
@@ -93,8 +128,7 @@ export default defineComponent({
           break;
         case Action.ArchiveAction:
           if (!this.validationFailed) {
-            this.archive();
-            this.viewMode();
+            this.archiveIfConfirmed()
           }
           break;
 

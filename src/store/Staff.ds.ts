@@ -6,6 +6,7 @@ export class StaffEntity {
     id:string
     first_name:string
     last_name:string
+    start_date:Date
     whole_time_equivalent:number
     band_id:number
     substantive:boolean

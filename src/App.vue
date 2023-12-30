@@ -3,7 +3,9 @@ import Sidebar from "./components/sidebar/Sidebar.vue";
 import {sidebarWidth} from "@/components/sidebar/state.ts";
 import PocketBase from 'pocketbase';
 import {useBandListStore} from "@/store/BandListStore";
+import {useStaffStore} from "@/store/StaffStore";
 import {DB_URL_ROOT} from "@/Constants.js";
+import { DialogWrapper } from 'vue3-promise-dialog';
 
 
 
@@ -12,19 +14,27 @@ const pb = new PocketBase(DB_URL_ROOT);
 
 export default {
   components:{
-    Sidebar
+    Sidebar,DialogWrapper
   },
   computed: {
     sidebarWidth() {
       return sidebarWidth
     }
   },
+  created() {
+    this.init();
+  },
   methods: {
     init: async function () {
       await pb.admins.authWithPassword('nrstirzaker.techblog@gmail.com', 'rush:RECEIVE:decided:02');
       sessionStorage.setItem('token', pb.authStore.token)
-      const store = useBandListStore();
-      await store.load();
+
+      const bandStore = useBandListStore();
+      await bandStore.load();
+
+
+      const staffStore = useStaffStore();
+      await staffStore.refresh();
     }
   }
 }
@@ -37,6 +47,7 @@ export default {
   <div :style="{'margin-left':sidebarWidth}">
     <router-view/>
   </div>
+  <DialogWrapper/>
 </template>
 
 <style>

@@ -9,6 +9,8 @@ import {
 import {useBandListStore} from "@/store/BandListStore";
 import {useStaffStore} from "@/store/StaffStore";
 import iStaffDTO from "@/declarations/iRawStaffDTO.d.ts";
+import {formatDateToDisplay} from '@/lib/FormatUtils.js'
+import GridFilterHeader from "@/components/GridFilterHeader.vue";
 
 
 
@@ -16,7 +18,7 @@ export default defineComponent({
   name: "staffListGrid",
 
   components: {
-    VDataTable,
+    VDataTable,GridFilterHeader
   },
 
   mounted() {
@@ -26,8 +28,11 @@ export default defineComponent({
 
     const bandListStore = useBandListStore()
     const staffStore = useStaffStore()
+    const formatStartDate = ((date) => {
+      return formatDateToDisplay(date,"")
+    });
 
-    return {bandListStore, staffStore}
+    return {bandListStore, staffStore,formatStartDate}
 
   },
   expose: ["refresh","update"],
@@ -80,6 +85,7 @@ export default defineComponent({
           width: "150px",
 
         },
+        {title: 'Start Date', align: 'center', key: 'startDate', width: "150px"},
         {title: 'Band', align: 'center', key: 'bandName', width: "150px"},
         {title: 'WTE', align: 'center', key: 'wholeTimeEquivalent'},
         {title: 'On Strength', align: 'center', key: 'onStrength'},
@@ -98,6 +104,7 @@ export default defineComponent({
 </script>
 
 <template>
+  <GridFilterHeader v-bind:headers="headers"/>
   <v-app>
     <v-data-table
         :headers="headers"
@@ -105,11 +112,13 @@ export default defineComponent({
         class="elevation-1"
 
     >
+
       <template v-slot:item="{item}">
 
         <tr  @click="rowClick(item)" v-bind:class="this.selected.includes(item.id) ? 'custom-highlight-row' : ''">
 
           <td>{{ item.fullname }}</td>
+          <td>{{ this.formatStartDate(item.startDate) }}</td>
           <td>{{ item.bandName }}</td>
           <td>{{ item.wholeTimeEquivalent }}</td>
           <td>{{ item.substantive }}</td>

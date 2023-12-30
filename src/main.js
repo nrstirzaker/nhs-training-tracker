@@ -15,6 +15,8 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+import {PromiseDialog} from "vue3-promise-dialog"
+
 
 const vuetify = createVuetify({
     components,
@@ -29,6 +31,7 @@ const app = createApp(App)
     .use(createPinia())
     .use(router)
     .use(vuetify)
+    .use(PromiseDialog)
     .mount('#app')
 await app.init();
 

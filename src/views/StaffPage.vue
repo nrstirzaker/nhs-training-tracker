@@ -5,15 +5,17 @@ import {sidebarWidth} from "../components/sidebar/state";
 import staffListGrid from "../components/StaffListGrid.vue";
 import ButtonBar from "../components/buttonbar/ButtonBar.vue";
 import Action from "../components/buttonbar/Action";
-import {isNumeric, isAlpha} from '@/lib/ValidationUtils.js';
+import {isAlpha, isNumeric} from '@/lib/ValidationUtils.js';
 import {storeToRefs} from 'pinia'
+import {formatDateToDisplay} from '@/lib/FormatUtils.js'
 
 
 import {Band} from "../store/Band.ds";
 import iStaffEntity from "@/declarations/iStaffEntity.d";
 import ValidationStage from "@/components/buttonbar/ValidationStage.js";
 import {useStaffStore} from "@/store/StaffStore";
-import iRawStaffDTO from "@/declarations/iRawStaffDTO.d.ts";
+import iRawStaffDTO from "@/declarations/iRawStaffDTO.d";
+
 
 
 export default defineComponent({
@@ -62,12 +64,23 @@ export default defineComponent({
 
         }
       ],
+      dateOnly:[
+        value => {
+          if (isNaN(DateTime.fromFormat(value,"dd/MM/yyyy"))) {
+            return 'Must be a valid date'
+          }else{
+            return true
+          }
+
+        }
+      ],
       recordIdForDataSession: "",
       isReadonly: true,
       form: {
         id: "",
         firstName: "",
         lastName: "",
+        startDate:"",
         wholeTimeEquivalent: null,
         bandId: null,
         substantive: null,
@@ -131,6 +144,7 @@ export default defineComponent({
       this.form.id = data.id
       this.form.firstName = data.firstName;
       this.form.lastName = data.lastName;
+      this.form.startDate = this.formatDateToDisplay(data.startDate);
       this.form.wholeTimeEquivalent = data.wholeTimeEquivalent ? data.wholeTimeEquivalent.toString() : "0";
       this.form.bandId = data.bandId;
       this.form.substantive = !!data.substantive;
@@ -144,6 +158,7 @@ export default defineComponent({
         id: this.form.id,
         first_name: this.form.firstName,
         last_name: this.form.lastName,
+        start_date:this.formatDateForDB(this.form.startDate),
         band_id: this.form.bandId,
         whole_time_equivalent: this.form.wholeTimeEquivalent,
         substantive: !!this.form.substantive,
@@ -151,6 +166,27 @@ export default defineComponent({
         on_maternity_leave: !!this.form.onMaternityLeave,
         archived: false,
       };
+    },
+    formatDateToDisplay: function(ssoDate : string){
+
+      if (ssoDate){
+        return formatDateToDisplay(ssoDate);
+      }else{
+        return ssoDate;
+      }
+
+    },
+    formatDateForDB: function(csDate : string){
+
+      if (csDate){
+        const dbDateAsString = DateTime.fromFormat(csDate,"dd/MM/yyyy").toFormat("yyyy-MM-dd hh:mm:ss");
+        //as time info is being 'added' it is defaulting to 12 noon but needs to be 12 midnight
+        const dbDateFormat = DateTime.fromFormat(dbDateAsString,"yyyy-MM-dd hh:mm:ss");
+        return dbDateFormat.set({hours: 0, minutes: 0, seconds: 0});
+      }else{
+        return csDate;
+      }
+
     },
     getBands: function () {
       const records = this.bandListStore.allActiveBands;
@@ -165,6 +201,11 @@ export default defineComponent({
 
     clear: function () {
       this.$refs.staffForm.reset();
+    },
+    archive: function () {
+      const record: iStaffEntity = this.collateData();
+      record.archived = true;
+      this.staffStore.update(record, this.displayOnRefresh)
     },
     update: function () {
       const record: iStaffEntity = this.collateData();
@@ -233,8 +274,9 @@ export default defineComponent({
           break;
         }
         case Action.ArchiveAction: {
-          //message/warning
-          this.goToNextorLastStaffMember();
+          //only arrives here if the user confirms
+          //this.goToNextorLastStaffMember();
+          this.archive();
           this.makeFormReadonly();
           break;
         }
@@ -248,7 +290,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="tw-max-w-full ">
+  <div class="tw-max-w-full">
     <h1>Staff</h1>
     <v-form ref="staffForm" validate-on="blur" :readonly="this.isReadonly">
 
@@ -257,7 +299,7 @@ export default defineComponent({
 
 
       <div>
-        <v-text-field v-model="form.id" name="id" type="text"/>
+        <v-text-field v-model="form.id" name="id" type="text" hidden/>
       </div>
 
 
@@ -275,6 +317,15 @@ export default defineComponent({
           <v-text-field class="fieldText block" v-model="form.lastName" name="lastName" type="text"
                         :rules="[...this.requiredRule,...this.alphaOnlyRule]"
                         placeholder="Last Name"/>
+        </div>
+      </div>
+      <div class="tw-grid tw-grid-cols-3 tw-gap-x-5 tw-gap-y-4 tw-grid-flow-row-dense">
+
+        <div class="tw-inputItem">
+          <div class="tw-inputLabel"><span>Start Date *</span></div>
+          <v-text-field  class="tw-fieldDate block" v-model="form.startDate" name="startDate"
+                        type="text" v-bind:rules="[...this.requiredRule, ...this.dateOnly]"
+                        placeholder="Start Date"/>
         </div>
 
         <div class="tw-inputItem">
