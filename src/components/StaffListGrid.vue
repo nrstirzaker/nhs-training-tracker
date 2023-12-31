@@ -76,21 +76,24 @@ export default defineComponent({
           align: ' d-none',
           sortable: false,
           key: 'id',
+          filterable: false
         },
         {
           title: 'Fullname',
           align: 'left',
           sortable: true,
           key: 'fullname',
-          width: "150px",
+          width: "200px",
+          filterable: true
 
         },
-        {title: 'Start Date', align: 'center', key: 'startDate', width: "150px"},
-        {title: 'Band', align: 'center', key: 'bandName', width: "150px"},
-        {title: 'WTE', align: 'center', key: 'wholeTimeEquivalent'},
-        {title: 'On Strength', align: 'center', key: 'onStrength'},
-        {title: 'Substantive', align: 'center', key: 'substantive'},
-        {title: 'Maternity', align: 'center', key: 'maternity'}
+
+        {title: 'Band', align: 'left', key: 'bandName', width: "100px", filterable: true},
+        {title: 'Start Date', align: 'left', key: 'startDate', width: "100px", filterable:false},
+        {title: 'WTE', align: 'left', key: 'wholeTimeEquivalent', width: "50px", filterable: false},
+        {title: 'On Strength', align: 'center', key: 'onStrength',width: "150px", filterable: false},
+        {title: 'Substantive', align: 'center', key: 'substantive',width: "150px", filterable: false},
+        {title: 'Maternity', align: 'center', key: 'maternity',width: "150px", filterable: false}
 
 
       ],
@@ -117,12 +120,12 @@ export default defineComponent({
 
         <tr  @click="rowClick(item)" v-bind:class="this.selected.includes(item.id) ? 'custom-highlight-row' : ''">
 
-          <td>{{ item.fullname }}</td>
-          <td>{{ this.formatStartDate(item.startDate) }}</td>
+          <td >{{ item.fullname }}</td>
           <td>{{ item.bandName }}</td>
-          <td>{{ item.wholeTimeEquivalent }}</td>
-          <td>{{ item.substantive }}</td>
+          <td>{{ this.formatStartDate(item.startDate) }}</td>
+          <td ><span class="alignCenter">{{ item.wholeTimeEquivalent }}</span></td>
           <td>{{ item.onStrength }}</td>
+          <td class="tw-text-center tx-content-center tw-flex m-0 w-100">{{ item.substantive }}</td>
           <td>{{ item.maternity }}</td>
         </tr>
 

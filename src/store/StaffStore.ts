@@ -113,6 +113,31 @@ export const useStaffStore = defineStore('staffStore', {
                 console.log(error)
             })
         },
+        async duplicateName(id:string, firstName:string, lastName:string, callback:Function){
+            const requestHeader : basicRequestHeader = getBasicRequestHeader();
+            let URL = "";
+            if (id) {
+                //URL = DB_URL_ROOT + "/api/collections/Staff/records?filter=
+                URL = DB_URL_ROOT + "/api/collections/Staff/records?filter="+ encodeURIComponent("(id!='"+id + "'&&first_name~'" + firstName + "%'&&last_name~'" + lastName+"%')")
+                //(id!%3D'0rv0k8p4cepx9pp'%26%26first_name~'Sandra%25'%26%26last_name~'Stirzaker%25')"
+                //URL = DB_URL_ROOT + "/api/collections/Staff/records?filter=(id != '" +id + "')"
+                //URL = DB_URL_ROOT + "/api/collections/Staff/records?filter=(id != '"+id + "' AND last_name = " + lastName + "%)"
+            }else {
+                URL = DB_URL_ROOT + "/api/collections/Staff/records?filter=(first_name~'" + firstName + "' && last_name~'" + lastName+"')"
+            }
+            await axios.get(URL, {headers:requestHeader})
+                .then(response =>{
+                    if (response.data.items.length===0){
+                        callback(false)
+                    }else{
+                        callback(true)
+                    }
+                }).catch(error =>{
+                    console.log(error)
+                })
+
+
+        }
         // async get(id:string,callback:Function) {
         //
         //     if (id) {

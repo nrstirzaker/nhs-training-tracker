@@ -15,6 +15,7 @@ import iStaffEntity from "@/declarations/iStaffEntity.d";
 import ValidationStage from "@/components/buttonbar/ValidationStage.js";
 import {useStaffStore} from "@/store/StaffStore";
 import iRawStaffDTO from "@/declarations/iRawStaffDTO.d";
+import {DateTime} from 'luxon';
 
 
 
@@ -76,6 +77,7 @@ export default defineComponent({
       ],
       recordIdForDataSession: "",
       isReadonly: true,
+      errorMessage:" ",
       form: {
         id: "",
         firstName: "",
@@ -125,7 +127,21 @@ export default defineComponent({
     const staffStore = useStaffStore()
     const {getRawStaffById, getFormattedStaffById} = storeToRefs(staffStore)
 
-    return {sidebarWidth, staffStore, bandListStore, staffListGrid, getRawStaffById,getFormattedStaffById}
+    const ensureCorrectWTEFormat = (event) => {
+
+      const isPrintableKey = event.key.length === 1 || event.key === 'Unidentified';
+      if (isPrintableKey){
+        const wteValue : string = event.target.value + event.key;
+        const wteValueAsNumber : number =  parseFloat(wteValue);
+        const positiveOneDigitAndThen2DPs = new RegExp('^\\d{1}(?:\\.\\d{0,2})?$')
+        if (!positiveOneDigitAndThen2DPs.test(wteValue) || wteValueAsNumber > 1){
+          event.preventDefault()
+          return false;
+        }
+      }
+    }
+
+    return {sidebarWidth, staffStore, bandListStore, staffListGrid, getRawStaffById, getFormattedStaffById, ensureCorrectWTEFormat}
 
   },
 
@@ -259,12 +275,33 @@ export default defineComponent({
             } else {
 
               console.log("Staff:btnActionHandler: SaveAction: is Valid")
-              this.validationStage = ValidationStage.Success
+
               const idOfCurrentRecord = this.recordIdForDataSession;
               if (idOfCurrentRecord) {
-                this.update()
+                this.staffStore.duplicateName(this.form.id,this.form.firstName, this.form.lastName, ((duplicate) => {
+                  if (duplicate){
+                    this.validationStage = ValidationStage.Failed
+                    console.log("duplicate");
+                    this.errorMessage = "This Staff member already exists";
+                  }else{
+                    this.update()
+                    this.validationStage = ValidationStage.Success
+                  }
+                }))
+
               } else {
-                this.save();
+
+                this.staffStore.duplicateName("",this.form.firstName, this.form.lastName, ((duplicate) => {
+                  if (duplicate) {
+                    this.validationStage = ValidationStage.Failed
+                    console.log("duplicate");
+                    this.errorMessage = "This Staff member already exists";
+                  } else {
+                    this.save();
+                    this.validationStage = ValidationStage.Success
+                  }
+                }))
+
               }
 
               this.makeFormReadonly();
@@ -290,7 +327,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="tw-max-w-full">
+  <div class="tw-max-w-fit">
     <h1>Staff</h1>
     <v-form ref="staffForm" validate-on="blur" :readonly="this.isReadonly">
 
@@ -302,6 +339,9 @@ export default defineComponent({
         <v-text-field v-model="form.id" name="id" type="text" hidden/>
       </div>
 
+      <div class="tw-grid tw-grid-cols-1 tw-gap-x-5 tw-gap-y-4 tw-grid-flow-row-dense">
+        <div>{{errorMessage}}</div>
+      </div>
 
       <div class="tw-grid tw-grid-cols-2 tw-gap-x-5 tw-gap-y-4 tw-grid-flow-row-dense">
 
@@ -324,7 +364,7 @@ export default defineComponent({
         <div class="tw-inputItem">
           <div class="tw-inputLabel"><span>Start Date *</span></div>
           <v-text-field  class="tw-fieldDate block" v-model="form.startDate" name="startDate"
-                        type="text" v-bind:rules="[...this.requiredRule, ...this.dateOnly]"
+                        type="number" min="0.1" v-bind:rules="[...this.requiredRule, ...this.dateOnly]"
                         placeholder="Start Date"/>
         </div>
 
@@ -332,7 +372,9 @@ export default defineComponent({
           <div class="tw-inputLabel"><span>WTE *</span></div>
           <v-text-field class="tw-fieldNumber block" v-model="form.wholeTimeEquivalent" name="wholeTimeEquivalent"
                         type="text" :rules="[...this.requiredRule, ...this.numericOnlyRule,...this.wteRange]"
-                        placeholder="WTE"/>
+                        placeholder="WTE" v-on:keydown="ensureCorrectWTEFormat"
+
+          />
         </div>
 
         <div class="tw-inputItem ">
